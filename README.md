@@ -2,6 +2,7 @@ nginx
 =====
 
 This role is a fork from https://github.com/bennojoy/nginx.
+It implements a different 'API' on how to define parameters.
 
 This role installs and configures the nginx web server. The user can specify
 any http configuration parameters they wish to apply their site. Any number of
@@ -20,13 +21,13 @@ The variables that can be passed to this role and a brief description about
 them are as follows.
 
     # The max clients allowed
-    nginx_max_clients: 512                                
+    nginx_max_clients: 512
 
     # A hash of the http paramters. Note that any
     # valid nginx http paramters can be added here.
     # (see the nginx documentation for details.)
-    nginx_http_params:                                    
-      sendfile: "on"                                      
+    nginx_http_params:
+      sendfile: "on"
       tcp_nopush: "on"
       tcp_nodelay: "on"
       keepalive_timeout: "65"
@@ -36,21 +37,27 @@ them are as follows.
     # A list of hashs that define the servers for nginx,
     # as with http parameters. Any valid server parameters
     # can be defined here.
-    nginx_sites:                                         
-     - server:                                           
-        file_name: foo
-        listen: 8080
-        server_name: localhost
-        root: "/tmp/site1"
-        location1: {name: /, try_files: "$uri $uri/ /index.html"}
-        location2: {name: /images/, try_files: "$uri $uri/ /index.html"}
+    nginx_sites:
      - server:
-        file_name: bar
-        listen: 9090
-        server_name: ansible
-        root: "/tmp/site2"
-        location1: {name: /, try_files: "$uri $uri/ /index.html"}
-        location2: {name: /images/, try_files: "$uri $uri/ /index.html"}
+          file_name: foo
+          listen: 8080
+          server_name: localhost
+          root: "/tmp/site1"
+       location:
+        - name: /
+          try_files: "$uri $uri/ /index.html"
+        - name: /images/
+          try_files: "$uri $uri/ /index.html"
+     - server:
+          file_name: bar
+          listen: 9090
+          server_name: ansible
+          root: "/tmp/site2"
+       location:
+        - name: /
+          try_files: "$uri $uri/ /index.html"
+        - name: /images/
+          try_files: "$uri $uri/ /index.html"
 
 Examples
 ========
@@ -73,7 +80,7 @@ sites configured.
       roles:
       - {role: nginx,
          nginx_http_params: { tcp_nodelay: "on",
-                              error_log: "/var/log/nginx/error.log"}, 
+                              error_log: "/var/log/nginx/error.log"},
                               nginx_sites: none }
 
 Note: Please make sure the HTTP directives passed are valid, as this role
@@ -93,8 +100,11 @@ for details.
           - server:
              file_name: bar
              listen: 8080
-             location1: {name: "/", try_files: "$uri $uri/ /index.html"}
-             location2: {name: /images/, try_files: "$uri $uri/ /index.html"}
+            location:
+             - name: "/"
+               try_files: "$uri $uri/ /index.html"
+             - name: /images/
+               try_files: "$uri $uri/ /index.html"
 
 Note: Each site added is represented by list of hashes, and the configurations
 generated are populated in /etc/nginx/conf.d/
@@ -120,15 +130,21 @@ directives.
               listen: 8080
               server_name: localhost
               root: "/tmp/site1"
-              location1: {name: /, try_files: "$uri $uri/ /index.html"}
-              location2: {name: /images/, try_files: "$uri $uri/ /index.html"}
+             location:
+                - name: /
+                  try_files: "$uri $uri/ /index.html"
+                - name: /images/
+                  try_files: "$uri $uri/ /index.html"
            - server:
               file_name: bar
               listen: 9090
               server_name: ansible
               root: "/tmp/site2"
-              location1: {name: /, try_files: "$uri $uri/ /index.html"}
-              location2: {name: /images/, try_files: "$uri $uri/ /index.html"}
+             location:
+                - name: /
+                  try_files: "$uri $uri/ /index.html"
+                - name: /images/
+                  try_files: "$uri $uri/ /index.html"
 
 Dependencies
 ------------
@@ -143,6 +159,7 @@ BSD
 Author Information
 ------------------
 
-Benno Joy
+Original role author:   Benno Joy
+Ginsys fork author:     Serge van Ginderachter <serge@vanginderachter.be>
 
 

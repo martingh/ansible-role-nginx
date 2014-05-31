@@ -1,8 +1,8 @@
 ---
 galaxy_info:
-  author: "Benno Joy"
-  company: AnsibleWorks
-  license: BSD
+  author:   "Serge van Ginderachter"
+  company:  "Ginsys"
+  license:  "BSD"
   min_ansible_version: 1.4
   platforms:
    - name: EL
@@ -20,7 +20,8 @@ galaxy_info:
       - quantal
       - raring
       - saucy
+      - trusty
   categories:
    - web
 dependencies: []
-  
+
