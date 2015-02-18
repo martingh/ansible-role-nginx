@@ -4,10 +4,15 @@ server {
 
 {% for key,value in item.server|dictsort if key != 'file_name' %}
     {{ key }} {{ value }};
-{% endfor %} 
+{% if nginx_separete_logs_per_site == True %}
+	access_log {{ nginx_log_dir}}/{{ item.server.server_name}}-{{ nginx_access_log_name}};
+	error_log {{ nginx_log_dir}}/{{ item.server.server_name}}-{{ nginx_error_log_name}};
+{% endif %}
+
+{% endfor %}
 {% if 'location' in item %}
 {% for location in item.location if 'location' in item %}
-    location {{ location.name }} { {% for key,value in location|dictsort if key != 'name' %} 
+    location {{ location.name }} { {% for key,value in location|dictsort if key != 'name' %}
         {{ key }} {{ value }}; {% endfor %}
 
     }
