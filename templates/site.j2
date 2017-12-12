@@ -14,8 +14,6 @@ server {
 {% for location in item.location if 'location' in item %}
     location {{ location.name }} { 
 {% for key,value in location|dictsort if key != 'name' %}
-        {{ key }} {{ value }}; 
-{% for key, value in location.iteritems() if key != 'name' %}
 {% if value is iterable and value is not string %}
 {% for v in value %}
         {{ key }} {{ v }};
