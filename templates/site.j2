@@ -2,7 +2,7 @@
 
 server {
 
-{% for key,value in item.server|dictsort if key != 'file_name' %}
+{% for key,value in item.server.iteritems() if key != 'file_name' %}
     {{ key }} {{ value }};
 {% if nginx_separate_logs_per_site == True %}
 	access_log {{ nginx_log_dir}}/{{ item.server.server_name}}-{{ nginx_access_log_name}};
@@ -15,8 +15,16 @@ server {
     location {{ location.name }} { 
 {% for key,value in location|dictsort if key != 'name' %}
         {{ key }} {{ value }}; 
+{% for key, value in location.iteritems() if key != 'name' %}
+{% if value is iterable and value is not string %}
+{% for v in value %}
+        {{ key }} {{ v }};
 {% endfor %}
-
+{% else %}
+        {{ key }} {{ value }};
+{% endif %}
+{% endfor %}
+{% endfor %}
     }
 {% endfor %}
 {% endif %}
