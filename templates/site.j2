@@ -2,7 +2,7 @@
 
 server {
 
-{% for key,value in item.server.iteritems() if key != 'file_name' %}
+{% for key,value in item.server|dictsort if key != 'file_name' %}
     {{ key }} {{ value }};
 {% if nginx_separate_logs_per_site == True %}
 	access_log {{ nginx_log_dir}}/{{ item.server.server_name}}-{{ nginx_access_log_name}};
@@ -25,6 +25,7 @@ server {
 {% endif %}
 {% endfor %}
 {% endfor %}
+
     }
 {% endfor %}
 {% endif %}
